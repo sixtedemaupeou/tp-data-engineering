@@ -2,16 +2,15 @@ from airflow.models import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
-import subprocess
 
 from tasks import extract_top_datasets, fetch_filter_store_datasets
 
-minio_container_ip = '172.30.0.3'# subprocess.run(["docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' minio"], stdout=subprocess.PIPE).stdout
-mongo_container_ip = '172.30.0.4'# subprocess.run(["docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mongo"], stdout=subprocess.PIPE).stdout
+minio_container_ip = 'host.docker.internal'#'172.30.0.3'
+mongo_container_ip = 'host.docker.internal'#'172.30.0.4'
 
 with DAG(
     dag_id='dag_tp',
-    schedule_interval='0 17 * * WED',
+    schedule_interval='00 16 * * WED',
     start_date=days_ago(1),
     dagrun_timeout=timedelta(minutes=60),
     tags=['python', 'minio', 'mongo'],

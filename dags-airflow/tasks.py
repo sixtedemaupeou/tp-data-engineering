@@ -42,7 +42,11 @@ def store_datasets(datasets_df: pd.DataFrame, minio_container_ip:str, bucket_nam
     s3.Object(bucket_name, f'{current_date}/df.csv').put(Body=csv_buffer.getvalue())
 
 
-def load_datasets(minio_container_ip: str, bucket_name = 'datagouv') -> pd.DataFrame:
+def load_datasets(
+    minio_container_ip: str,
+    bucket_name = 'datagouv'
+) -> pd.DataFrame:
+    """Loads given datasets from Minio storage into a Pandas dataframe"""
     s3_client = get_boto3_client(minio_container_ip)
     # TODO: Make current date a param of the DAG
     current_date = datetime.today().strftime('%Y-%m-%d')
@@ -67,7 +71,12 @@ def get_top_orgs(n_orgs: int=30) -> pd.DataFrame:
     return top_orgs_df
 
 
-def create_mongo_document(datasets_df: pd.DataFrame, mongo_container_ip: str) -> None:
+def create_mongo_document(
+    datasets_df: pd.DataFrame,
+    mongo_container_ip: str
+) -> None:
+    """Connects to Mongo DB and create document with the records of the given
+    datasets dataframe"""
     client = MongoClient(mongo_container_ip, 27017)
     tops_collection = client.datagouv.tops
     tops_collection.insert_one({"top_30_orgs_datasets": datasets_df.to_dict('records')})
